@@ -7,10 +7,10 @@
     "Mathias Bynens <mathias@qiwi.be> (http://mathiasbynens.be/)",
     "Thomas Danecker <thomas.danecker@eversports.com>"
   ],
-  "homepage": "http://github.com/eversport/node-unicodetable",
+  "homepage": "http://github.com/tdanecker/node-unicodetable",
   "repository": {
     "type": "git",
-    "url": "git://github.com/eversport/node-unicodetable.git"
+    "url": "git://github.com/tdanecker/node-unicodetable.git"
   },
   "engines": {
     "node": ">= 0.8.x"
