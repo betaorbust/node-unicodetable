@@ -18,16 +18,35 @@ systemfiles = [
 refs = 0;
 
 
-// based on https://github.com/mathiasbynens/jsesc
+function zeroPadHex(text, finalLength) {
+    return ('0000' + text).slice(-1 * finalLength);
+}
+
 function escape(charValue) {
     var hexadecimal = charValue.replace(/^0*/, ''); // is already in hexadecimal
-    var longhand = hexadecimal.length > 2;
-    return '\\' + (longhand ? 'u' : 'x') +
-            ('0000' + hexadecimal).slice(longhand ? -4 : -2);
+
+    if (hexadecimal.length <= 2) {
+        // shorthand: \x30
+        return '\\x' + zeroPadHex(hexadecimal, 2);
+    } else if (hexadecimal.length <= 4) {
+        // BMP unicode: \u2602
+        return '\\u' + zeroPadHex(hexadecimal, 4);
+    } else {
+        // Outside of BMP: \uD83D\uDE00
+        var astralCodePoint = parseInt(hexadecimal, 16);
+        var highSurrogate =
+            Math.floor((astralCodePoint - 0x10000) / 0x400) + 0xd800;
+        var lowSurrogate = ((astralCodePoint - 0x10000) % 0x400) + 0xdc00;
+        var highSurrogateString =
+            '\\u' + zeroPadHex(highSurrogate.toString(16), 4);
+        var lowSurrogateString =
+            '\\u' + zeroPadHex(lowSurrogate.toString(16), 4);
+        return '' + highSurrogateString + '' + lowSurrogateString;
+    }
 }
 
 function stringify(key, value) {
-    return key + ":" + JSON.stringify(value).replace(/\\\\(u|x)/, "\\$1");
+    return key + ":" + JSON.stringify(value).replace(/\\\\(u|x)/g, "\\$1");
 }
 
 function create_index(categories, len) {
